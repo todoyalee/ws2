@@ -29,4 +29,4 @@ async function scrapeProduct(url) {
   }
 }
 
-scrapeProduct("https://en.wikipedia.org/wiki/JavaScript");
+scrapeProduct("https://www.basketball-reference.com/leaders/");
