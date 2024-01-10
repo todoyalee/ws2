@@ -15,9 +15,12 @@ async function scrapeProduct(url) {
       return paragraphs.map(paragraph => paragraph.textContent.trim());
     });
 
-    // Save the scraped data to a text file
-    fs.writeFileSync('scraped_data.txt', allParagraphs.join('\n'), 'utf-8');
-    console.log('Data has been exported to scraped_data.txt');
+    // Create a JavaScript object
+    const dataObject = { paragraphs: allParagraphs };
+
+    // Save the data to a JSON file
+    fs.writeFileSync('scraped_data.json', JSON.stringify(dataObject, null, 2), 'utf-8');
+    console.log('Data has been exported to scraped_data.json');
 
   } catch (error) {
     console.error("Error during navigation:", error);
