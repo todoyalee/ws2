@@ -1,5 +1,6 @@
 const puppeteer = require("puppeteer");
 const fs = require("fs");
+const ExcelJS = require("exceljs");
 
 async function scrapeProduct(url) {
   const browser = await puppeteer.launch();
@@ -9,18 +10,28 @@ async function scrapeProduct(url) {
   try {
     await page.goto(url);
 
-    // Your scraping logic here
+    // Wait for paragraphs to be present on the page
+    await page.waitForSelector('p');
 
+    // Your scraping logic here
     const allParagraphs = await page.$$eval('p', paragraphs => {
       return paragraphs.map(paragraph => paragraph.textContent.trim());
     });
 
-    // Create a JavaScript object
-    const dataObject = { paragraphs: allParagraphs };
+    // Log the scraped data to console
+    console.log("All Paragraphs:", allParagraphs);
 
-    // Save the data to a JSON file
-    fs.writeFileSync('scraped_data.json', JSON.stringify(dataObject, null, 2), 'utf-8');
-    console.log('Data has been exported to scraped_data.json');
+    // Save the scraped data to an Excel file
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet 1');
+    
+    allParagraphs.forEach((paragraph, index) => {
+      worksheet.addRow({ Paragraph: paragraph });
+    });
+
+    const excelFilePath = 'scrapeed_data.xlsx';
+    await workbook.xlsx.writeFile(excelFilePath);
+    console.log(`Data has been exported to ${excelFilePath}`);
 
   } catch (error) {
     console.error("Error during navigation:", error);
@@ -29,4 +40,4 @@ async function scrapeProduct(url) {
   }
 }
 
-scrapeProduct("https://www.basketball-reference.com/leaders/");
+scrapeProduct("https://en.wikipedia.org/wiki/JavaScript");
